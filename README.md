@@ -1,5 +1,4 @@
-# Cortex Cloud License Calculator
-
+# Cortex Cloud License Estimator
 Web-based calculator for determining Cortex Cloud workload license requirements based on Palo Alto Networks metering guide.
 
 ## Files
