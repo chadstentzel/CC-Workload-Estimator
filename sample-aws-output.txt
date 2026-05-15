@@ -1,0 +1,10 @@
+  -- AWS WORKLOAD COUNTS --
+     VM workloads: 150
+     VM (container) workloads: 25
+     Serverless workloads: 8
+     S3 workloads: 12
+     CaaS workloads: 5
+     Container Image workloads: 3
+     PaaS workloads: 10
+
+** SUM TOTAL AWS WORKLOADS: 213 **

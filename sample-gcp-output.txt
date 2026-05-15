@@ -1,0 +1,10 @@
+  -- GCP WORKLOAD COUNTS --
+     VM workloads: 175
+     VM (container) workloads: 20
+     Serverless workloads: 6
+     S3 workloads: 10
+     CaaS workloads: 7
+     Container Image workloads: 4
+     PaaS workloads: 12
+
+** SUM TOTAL GCP WORKLOADS: 234 **

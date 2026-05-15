@@ -1,0 +1,11 @@
+    SUMMARY WORKLOAD COUNTS FOR: Production Subscription (ID: abc-123-def)
+     VM workloads: 200
+     VM (container) workloads: 30
+     Serverless workloads: 12
+     Storage workloads: 15
+     CaaS workloads: 8
+     Container Image workloads: 5
+     PaaS workloads: 18
+    SUMMARY WORKLOADS: 288
+
+** SUM TOTAL AZURE WORKLOADS: 288 **
