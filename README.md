@@ -68,7 +68,7 @@ Test files for v2 upload functionality:
 ## Sizing Scripts
 
 For automated workload discovery, use the sizing scripts located at:
-`C:\Users\cstentzel\Documents\Code\CC Sizing Script\cc-workload-sizing-main`
+https://github.com/PaloAltoNetworks/cc-workload-sizing
 
 Available for:
 - AWS - `AWS/cc-workload-sizing-aws.sh`
