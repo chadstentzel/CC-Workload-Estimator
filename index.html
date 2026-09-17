@@ -511,6 +511,13 @@
                         <div class="conversion">10 Image Scans = 1 Workload</div>
                         <input type="number" id="container-images" min="0" value="0" onfocus="this.select()" onchange="calculateWorkloads()">
                     </div>
+
+                    <div class="workload-item">
+                        <label for="developers">Developers</label>
+                        <div class="conversion">1 Developer = 1 Application Security License</div>
+                        <input type="number" id="developers" min="0" value="0" onfocus="this.select()" onchange="calculateWorkloads()">
+                        <p style="font-size: 0.75rem; color: #6c757d; margin-top: 8px; line-height: 1.4;">A developer is any user with a unique email address that has contributed to a repo within the last 90 days.</p>
+                    </div>
                 </div>
 
                 <div class="results">
@@ -532,6 +539,11 @@
                     <div class="total-workloads">
                         <div class="label">Total Workload Licenses Required</div>
                         <div class="value" id="total-workloads">0</div>
+                    </div>
+
+                    <div class="total-workloads" style="margin-top: 15px;">
+                        <div class="label">Total Application Security Licenses Required</div>
+                        <div class="value" id="total-app-security">0</div>
                     </div>
 
                     <div class="breakdown">
@@ -762,6 +774,19 @@
                 }
             });
 
+            // Add developers to breakdown
+            const developers = parseFloat(document.getElementById('developers').value) || 0;
+            if (developers > 0) {
+                breakdownHTML += `<div class="breakdown-item"><div>`;
+                breakdownHTML += `<div class="name">Developers (Application Security)</div>`;
+                breakdownHTML += `<div class="calc">${developers} × 1 = ${developers.toFixed(2)}</div>`;
+                breakdownHTML += `</div><div class="result">${Math.ceil(developers)} AS</div></div>`;
+            }
+
+            // Calculate Application Security Licenses (Developers)
+            const developers = parseFloat(document.getElementById('developers').value) || 0;
+            const appSecurityLicenses = Math.ceil(developers);
+
             // Update display
             const postureTotal = Math.ceil(totalPosture);
             const runtimeTotal = Math.ceil(totalRuntime);
@@ -770,12 +795,13 @@
             document.getElementById('posture-workloads').textContent = postureTotal.toLocaleString();
             document.getElementById('runtime-workloads').textContent = runtimeTotal.toLocaleString();
             document.getElementById('total-workloads').textContent = grandTotal.toLocaleString();
+            document.getElementById('total-app-security').textContent = appSecurityLicenses.toLocaleString();
 
             // Update breakdown
             if (breakdownHTML === '') {
                 breakdownHTML = '<div style="text-align: center; color: #6c757d;">No workloads entered yet</div>';
             } else {
-                breakdownHTML = '<div class="breakdown-legend">P = Posture Licenses | R = Runtime Licenses</div>' + breakdownHTML;
+                breakdownHTML = '<div class="breakdown-legend">P = Posture Licenses | R = Runtime Licenses | AS = Application Security Licenses</div>' + breakdownHTML;
             }
 
             document.getElementById('breakdown-content').innerHTML = breakdownHTML;
@@ -795,6 +821,7 @@
             const postureTotal = document.getElementById('posture-workloads').textContent;
             const runtimeTotal = document.getElementById('runtime-workloads').textContent;
             const grandTotal = document.getElementById('total-workloads').textContent;
+            const appSecurityTotal = document.getElementById('total-app-security').textContent;
 
             // Add header with Palo Alto green background
             doc.setFillColor(0, 204, 136);
@@ -872,6 +899,18 @@
             doc.setFont(undefined, 'bold');
             doc.text(grandTotal, 20, yPos + 20);
 
+            // Application Security Licenses box (full width)
+            yPos += 35;
+            doc.setFillColor(102, 51, 153);
+            doc.roundedRect(15, yPos, 180, 25, 3, 3, 'F');
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.setTextColor(255, 255, 255);
+            doc.text('Total Application Security Licenses Required', 20, yPos + 8);
+            doc.setFontSize(22);
+            doc.setFont(undefined, 'bold');
+            doc.text(appSecurityTotal, 20, yPos + 20);
+
             // Add breakdown section
             yPos += 40;
             doc.setTextColor(0, 0, 0);
@@ -890,7 +929,8 @@
                 { id: 'dbaas', name: 'DBaaS (TB)', ratio: 1, postureOnly: true },
                 { id: 'saas-users', name: 'SaaS Users', ratio: 10, postureOnly: true },
                 { id: 'asm-unmanaged', name: 'ASM Unmanaged', ratio: 4, postureOnly: true },
-                { id: 'container-images', name: 'Container Images', ratio: 10, postureOnly: true }
+                { id: 'container-images', name: 'Container Images', ratio: 10, postureOnly: true },
+                { id: 'developers', name: 'Developers (App Security)', ratio: 1, appSecurityOnly: true }
             ];
 
             yPos += 8;
@@ -901,7 +941,24 @@
             let hasBreakdown = false;
 
             workloadTypes.forEach(type => {
-                if (type.postureOnly) {
+                if (type.appSecurityOnly) {
+                    const count = parseFloat(document.getElementById(type.id).value) || 0;
+                    if (count > 0) {
+                        if (yPos > 270) {
+                            doc.addPage();
+                            yPos = 20;
+                        }
+                        hasBreakdown = true;
+                        const licenses = Math.ceil(count / type.ratio);
+                        doc.setTextColor(0, 0, 0);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(type.name, 15, yPos);
+                        doc.setFont(undefined, 'normal');
+                        doc.setTextColor(100, 100, 100);
+                        doc.text(`${count} × ${type.ratio} = ${licenses} Application Security licenses`, 15, yPos + 5);
+                        yPos += 12;
+                    }
+                } else if (type.postureOnly) {
                     const count = parseFloat(document.getElementById(type.id).value) || 0;
                     if (count > 0) {
                         if (yPos > 270) {
