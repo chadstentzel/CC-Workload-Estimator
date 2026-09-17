@@ -774,18 +774,17 @@
                 }
             });
 
-            // Add developers to breakdown
+            // Calculate Application Security Licenses (Developers)
             const developers = parseFloat(document.getElementById('developers').value) || 0;
+            const appSecurityLicenses = Math.ceil(developers);
+
+            // Add developers to breakdown
             if (developers > 0) {
                 breakdownHTML += `<div class="breakdown-item"><div>`;
                 breakdownHTML += `<div class="name">Developers (Application Security)</div>`;
                 breakdownHTML += `<div class="calc">${developers} × 1 = ${developers.toFixed(2)}</div>`;
                 breakdownHTML += `</div><div class="result">${Math.ceil(developers)} AS</div></div>`;
             }
-
-            // Calculate Application Security Licenses (Developers)
-            const developers = parseFloat(document.getElementById('developers').value) || 0;
-            const appSecurityLicenses = Math.ceil(developers);
 
             // Update display
             const postureTotal = Math.ceil(totalPosture);
