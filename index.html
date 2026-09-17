@@ -402,6 +402,10 @@
         <div class="calculator">
             <div class="calculator-header">
                 <h2>Enter Your Workload Counts</h2>
+                <div style="margin-bottom: 20px;">
+                    <label for="customer-name" style="display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 0.95rem;">Customer Name (Optional)</label>
+                    <input type="text" id="customer-name" placeholder="Enter customer name for this calculation" style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 1rem;" onfocus="this.select()">
+                </div>
                 <div class="upload-section">
                     <h3>📁 Quick Import from Sizing Script</h3>
                     <p>Upload the output from AWS, Azure, or GCP workload sizing scripts to auto-populate fields</p>
@@ -809,6 +813,7 @@
         function resetCalculator() {
             const inputs = document.querySelectorAll('input[type="number"]');
             inputs.forEach(input => input.value = 0);
+            document.getElementById('customer-name').value = '';
             calculateWorkloads();
         }
 
@@ -821,10 +826,14 @@
             const runtimeTotal = document.getElementById('runtime-workloads').textContent;
             const grandTotal = document.getElementById('total-workloads').textContent;
             const appSecurityTotal = document.getElementById('total-app-security').textContent;
+            const customerName = document.getElementById('customer-name').value.trim();
+
+            // Adjust header height based on whether customer name is present
+            const headerHeight = customerName ? 50 : 40;
 
             // Add header with Palo Alto green background
             doc.setFillColor(0, 204, 136);
-            doc.rect(0, 0, 210, 40, 'F');
+            doc.rect(0, 0, 210, headerHeight, 'F');
 
             // Add title
             doc.setTextColor(255, 255, 255);
@@ -832,9 +841,18 @@
             doc.setFont(undefined, 'bold');
             doc.text('Cortex Cloud License Calculator', 105, 18, { align: 'center' });
 
+            // Add customer name if provided
+            let yOffset = 28;
+            if (customerName) {
+                doc.setFontSize(16);
+                doc.setFont(undefined, 'bold');
+                doc.text(customerName, 105, yOffset, { align: 'center' });
+                yOffset += 10;
+            }
+
             doc.setFontSize(12);
             doc.setFont(undefined, 'normal');
-            doc.text('Workload License Calculation Results', 105, 28, { align: 'center' });
+            doc.text('Workload License Calculation Results', 105, yOffset, { align: 'center' });
 
             // Reset text color for body
             doc.setTextColor(0, 0, 0);
@@ -846,15 +864,15 @@
                 day: 'numeric'
             });
             doc.setFontSize(10);
-            doc.text(`Generated: ${today}`, 15, 50);
+            doc.text(`Generated: ${today}`, 15, headerHeight + 10);
 
             // Add summary section
             doc.setFontSize(16);
             doc.setFont(undefined, 'bold');
-            doc.text('License Summary', 15, 65);
+            doc.text('License Summary', 15, headerHeight + 25);
 
             // Add boxes for totals
-            let yPos = 75;
+            let yPos = headerHeight + 35;
 
             // Posture Licenses box
             doc.setFillColor(240, 249, 255);
